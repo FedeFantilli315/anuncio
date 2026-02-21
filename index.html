@@ -3,181 +3,619 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Un mensaje para vos</title>
+  <title>ChildMaker — Prototipo</title>
 
   <style>
+    :root{
+      --bg:#0b0b10;
+      --card:#121224;
+      --card2:#0f0f1a;
+      --text:#ffffff;
+      --muted:#b9b9c9;
+      --accent:#7c5cff;
+      --accent2:#ff4d6d;
+      --ok:#39d98a;
+      --warn:#ffcc66;
+      --border: rgba(255,255,255,0.10);
+    }
+
+    *{ box-sizing:border-box; }
+
     body{
       margin:0;
-      font-family: Arial, Helvetica, sans-serif;
-      background:#0b0b0f;
-      color:white;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, rgba(124,92,255,0.18), transparent 55%),
+                  radial-gradient(1000px 700px at 100% 20%, rgba(255,77,109,0.14), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
       display:flex;
-      justify-content:center;
       align-items:center;
-      height:100vh;
-      text-align:center;
+      justify-content:center;
+      padding:20px;
     }
 
-    .container{
-      width:90%;
-      max-width:520px;
+    .shell{
+      width: min(920px, 100%);
     }
 
-    button{
-      background:#ff4d6d;
-      border:none;
-      padding:15px 25px;
-      color:white;
-      font-size:18px;
-      border-radius:10px;
-      margin-top:20px;
-      cursor:pointer;
+    /* Top bar (empresa) */
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:14px 16px;
+      background: rgba(18,18,36,0.70);
+      border:1px solid var(--border);
+      border-radius:16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.35);
+      margin-bottom:14px;
     }
 
-    button:hover{ background:#ff3355; }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 220px;
+    }
 
-    input{
-      width:92%;
-      padding:12px;
-      margin:8px 0;
-      border-radius:8px;
-      border:none;
-      text-align:center;
+    .logoMark{
+      width:38px; height:38px;
+      border-radius:12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display:grid;
+      place-items:center;
+      font-weight:800;
+      letter-spacing:0.5px;
+      box-shadow: 0 10px 30px rgba(124,92,255,0.25);
+      user-select:none;
+    }
+
+    .brandText{
+      line-height:1.1;
+    }
+    .brandText .welcome{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:0.3px;
+    }
+    .brandText .name{
+      font-size:16px;
+      font-weight:800;
+    }
+
+    .statusPill{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color:var(--muted);
+      font-size:12px;
+      user-select:none;
+    }
+    .dot{
+      width:8px; height:8px;
+      border-radius:50%;
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(57,217,138,0.12);
+    }
+
+    /* Card */
+    .card{
+      background: linear-gradient(180deg, rgba(18,18,36,0.82), rgba(18,18,36,0.62));
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow: 0 18px 70px rgba(0,0,0,0.38);
+      overflow:hidden;
+    }
+
+    .cardInner{
+      padding:22px 18px;
+    }
+
+    .stepHeader{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    h1,h2,h3{ margin:0; }
+    h2{
+      font-size:22px;
+      letter-spacing:0.2px;
+    }
+    .subtitle{
+      margin-top:10px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .progress{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      padding:6px 10px;
+      border-radius:999px;
+      user-select:none;
+      white-space:nowrap;
+    }
+
+    /* Inputs */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+      margin-top:14px;
+    }
+    @media(min-width:720px){
+      .grid.two{ grid-template-columns: 1fr 1fr; }
+      .grid.three{ grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    input, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,0.18);
+      color:var(--text);
       outline:none;
     }
-
-    .hidden{ display:none; }
-
-    .fade{ animation:fadein 0.8s; }
-
-    @keyframes fadein{
-      from{opacity:0;}
-      to{opacity:1;}
+    input::placeholder{ color: rgba(255,255,255,0.30); }
+    input:focus, select:focus{
+      border-color: rgba(124,92,255,0.55);
+      box-shadow: 0 0 0 4px rgba(124,92,255,0.14);
     }
 
-    .big{
-      font-size:34px;
-      font-weight:bold;
-      margin-top:20px;
-      line-height:1.15;
-    }
-
-    .small{
-      color:#cccccc;
-      margin-top:12px;
-      line-height:1.4;
-    }
-
-    #heart{
-      font-size:60px;
+    /* Buttons */
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
       margin-top:18px;
-      animation:pulse 1s infinite;
     }
 
-    @keyframes pulse{
-      0%{transform:scale(1);}
-      50%{transform:scale(1.2);}
-      100%{transform:scale(1);}
+    .btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      border-radius:14px;
+      padding:12px 16px;
+      font-weight:700;
+      color:var(--text);
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 14px 40px rgba(124,92,255,0.18);
+    }
+
+    .btn:active{ transform: translateY(1px); }
+
+    .btnGhost{
+      background: rgba(255,255,255,0.06);
+      border:1px solid var(--border);
+      box-shadow:none;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    /* Step visibility + animation */
+    .hidden{ display:none; }
+    .fadeIn{
+      animation: fade 0.35s ease-out;
+    }
+    @keyframes fade{
+      from{ opacity:0; transform: translateY(6px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+
+    /* Step 4 yes/no question */
+    .questionBox{
+      margin-top:14px;
+      padding:16px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,0.16);
+    }
+    .qTitle{
+      font-size:16px;
+      font-weight:800;
+      line-height:1.35;
+      margin-bottom:10px;
+    }
+
+    .ynRow{
+      display:flex;
+      gap:10px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .btnYes{
+      background: rgba(57,217,138,0.14);
+      border:1px solid rgba(57,217,138,0.35);
+      color: #dfffee;
+      box-shadow:none;
+    }
+    .btnNo{
+      background: rgba(255,204,102,0.12);
+      border:1px solid rgba(255,204,102,0.35);
+      color: #fff2d3;
+      box-shadow:none;
+    }
+
+    /* Step 6: interactive big button */
+    .bigReveal{
+      margin-top:16px;
+      width:100%;
+      padding:16px 18px;
+      font-size:18px;
+      border-radius:18px;
+      border:none;
+      cursor:pointer;
+      color:#fff;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      box-shadow: 0 18px 60px rgba(255,77,109,0.16);
+      animation: breathe 1.2s ease-in-out infinite;
+      transform-origin:center;
+    }
+    @keyframes breathe{
+      0%{ transform: scale(1); }
+      50%{ transform: scale(1.06); }
+      100%{ transform: scale(1); }
+    }
+
+    /* Step 7 ultrasound */
+    .ultraWrap{
+      margin-top:14px;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,0.20);
+    }
+    .ultraWrap img{
+      width:100%;
+      display:block;
+    }
+    .caption{
+      padding:12px 14px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.4;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .caption b{ color:#fff; }
+
+    /* Footer */
+    .foot{
+      margin-top:12px;
+      color: rgba(255,255,255,0.25);
+      font-size:12px;
+      text-align:center;
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
+  <div class="shell">
 
-    <!-- PANTALLA 1 -->
-    <div id="s1" class="fade">
-      <h2>Hola 👋</h2>
-      <p>Si recibiste este link es porque sos importante para mí.</p>
-      <p>Tengo algo que contarte…</p>
-      <p><b>pero primero necesito tu ayuda.</b></p>
-      <button onclick="go(2)">Empezar</button>
+    <div class="topbar">
+      <div class="brand">
+        <div class="logoMark">CM</div>
+        <div class="brandText">
+          <div class="welcome">Welcome to</div>
+          <div class="name">ChildMaker</div>
+        </div>
+      </div>
+
+      <div class="statusPill">
+        <span class="dot"></span>
+        <span>Prototipo interno • v0.1</span>
+      </div>
     </div>
 
-    <!-- PANTALLA 2 -->
-    <div id="s2" class="hidden fade">
-      <h2>Veamos cuánto me conocés 😄</h2>
-      <input placeholder="¿En qué ciudad nací?" />
-      <input placeholder="¿Mi comida favorita?" />
-      <input placeholder="¿Algo que siempre digo?" />
-      <button onclick="go(3); startLoading();">Continuar</button>
+    <div class="card">
+      <div class="cardInner">
+
+        <!-- STEP 1 -->
+        <section id="s1" class="fadeIn">
+          <div class="stepHeader">
+            <div>
+              <h2>Prototipo registro administrativo</h2>
+              <div class="subtitle">
+                ¡Bienvenido! Clickeá en <b>Continuar</b> para pasar al registro.
+              </div>
+            </div>
+            <div class="progress">Paso 1 / 7</div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" onclick="go(2)">Continuar</button>
+          </div>
+        </section>
+
+        <!-- STEP 2 -->
+        <section id="s2" class="hidden">
+          <div class="stepHeader">
+            <div>
+              <h2>Registro de usuario</h2>
+              <div class="subtitle">Completá los datos básicos para continuar.</div>
+            </div>
+            <div class="progress">Paso 2 / 7</div>
+          </div>
+
+          <div class="grid three">
+            <div>
+              <label>Nombre y Apellido</label>
+              <input id="nombre" placeholder="Ej: Ana Pérez" />
+            </div>
+            <div>
+              <label>Ciudad</label>
+              <input id="ciudad" placeholder="Ej: Córdoba" />
+            </div>
+            <div>
+              <label>Edad</label>
+              <input id="edad" type="number" min="0" max="120" placeholder="Ej: 30" />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btnGhost btn" onclick="go(1)">Volver</button>
+            <button class="btn" onclick="go(3)">Continuar</button>
+          </div>
+        </section>
+
+        <!-- STEP 3 -->
+        <section id="s3" class="hidden">
+          <div class="stepHeader">
+            <div>
+              <h2>Encuesta principal</h2>
+              <div class="subtitle">Respuestas rápidas. No hay correctas o incorrectas.</div>
+            </div>
+            <div class="progress">Paso 3 / 7</div>
+          </div>
+
+          <div class="grid two">
+            <div>
+              <label>Trabajo actual</label>
+              <input id="trabajo" placeholder="Ej: Estudio / Trabajo / Ambos" />
+            </div>
+            <div>
+              <label>Cantidad de hs.</label>
+              <input id="hs" placeholder="Ej: 8" />
+            </div>
+            <div style="grid-column: 1 / -1;">
+              <label>Tiempo libre en el día</label>
+              <input id="tiempo" placeholder="Ej: 2 hs / poco / bastante" />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btnGhost btn" onclick="go(2)">Volver</button>
+            <button class="btn" onclick="startYesNo()">Continuar</button>
+          </div>
+        </section>
+
+        <!-- STEP 4 -->
+        <section id="s4" class="hidden">
+          <div class="stepHeader">
+            <div>
+              <h2>Segunda encuesta</h2>
+              <div class="subtitle">Respondé con <b>SI</b> o <b>NO</b>.</div>
+            </div>
+            <div class="progress">Paso 4 / 7</div>
+          </div>
+
+          <div class="questionBox">
+            <div class="qTitle" id="qText">...</div>
+            <div class="ynRow">
+              <button class="btn btnYes" onclick="answer(true)">SI</button>
+              <button class="btn btnNo" onclick="answer(false)">NO</button>
+            </div>
+            <div class="subtitle" id="qHint" style="margin-top:10px;">(Tus respuestas quedan registradas)</div>
+          </div>
+
+          <div class="actions">
+            <button class="btnGhost btn" onclick="go(3)">Volver</button>
+          </div>
+        </section>
+
+        <!-- STEP 5 -->
+        <section id="s5" class="hidden">
+          <div class="stepHeader">
+            <div>
+              <h2>Nota del sistema</h2>
+              <div class="subtitle" id="s5text">
+                Seguramente se preguntará a qué se quiere llegar con estas preguntas...
+              </div>
+            </div>
+            <div class="progress">Paso 5 / 7</div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" onclick="go(6)">Continuar</button>
+          </div>
+        </section>
+
+        <!-- STEP 6 -->
+        <section id="s6" class="hidden">
+          <div class="stepHeader">
+            <div>
+              <h2>Evaluación final</h2>
+              <div class="subtitle">
+                Necesitamos saber si ud está preparado para lo que se viene.
+                <br/>
+                Necesitaremos ayuda y creatividad para abordar este desafío.
+              </div>
+            </div>
+            <div class="progress">Paso 6 / 7</div>
+          </div>
+
+          <div class="subtitle" style="margin-top:10px;">
+            → Click para ver el desafío:
+          </div>
+
+          <button class="bigReveal" onclick="go(7)">
+            VER EL DESAFÍO
+          </button>
+
+          <div class="actions">
+            <button class="btnGhost btn" onclick="go(5)">Volver</button>
+          </div>
+        </section>
+
+        <!-- STEP 7 -->
+        <section id="s7" class="hidden">
+          <div class="stepHeader">
+            <div>
+              <h2>Desafío</h2>
+              <div class="subtitle">
+                Bueno… era esto 😄
+              </div>
+            </div>
+            <div class="progress">Paso 7 / 7</div>
+          </div>
+
+          <div class="ultraWrap">
+            <img src="assets/ecografia.jpg" alt="Ecografía" onerror="imgError(this)" />
+            <div class="caption">
+              <div><b>¡Hola, tíos!</b> 👶✨</div>
+              <div id="who"></div>
+            </div>
+          </div>
+
+          <div class="subtitle" style="margin-top:12px;">
+            <b>Vamos a ser papás</b> ❤️
+          </div>
+
+          <div class="actions">
+            <button class="btn" onclick="restart()">Volver al inicio</button>
+          </div>
+
+          <div class="subtitle" style="margin-top:10px; font-size:12px; opacity:0.9;">
+            (Si querés, después hacemos una versión con música/latido y un texto personalizado por familiar)
+          </div>
+        </section>
+
+      </div>
     </div>
 
-    <!-- PANTALLA 3 -->
-    <div id="s3" class="hidden fade">
-      <h2 id="loading">Cargando recuerdos...</h2>
-      <p class="small">Por favor esperá</p>
-    </div>
-
-    <!-- PANTALLA 4 -->
-    <div id="s4" class="hidden fade">
-      <h2>La vida está hecha de etapas</h2>
-      <p id="etapa" class="big" style="font-size:28px;"></p>
-      <p class="small">Seguí leyendo…</p>
-    </div>
-
-    <!-- PANTALLA 5 -->
-    <div id="s5" class="hidden fade">
-      <h2>A veces la vida trae sorpresas...</h2>
-      <div id="heart">❤️</div>
-      <button onclick="go(6)">Revelar</button>
-    </div>
-
-    <!-- PANTALLA 6 (FINAL) -->
-    <div id="s6" class="hidden fade">
-      <div class="big">Vamos a ser papás</div>
-      <div class="small">Y queríamos que seas de los primeros en saberlo ❤️</div>
-      <div class="small" style="margin-top:22px;">Fecha estimada: Próximos meses 👶</div>
-    </div>
-
+    <div class="foot">ChildMaker © — Prototipo académico (modo demo)</div>
   </div>
 
   <script>
+    // Navegación
     function go(n){
-      for(let i=1;i<=6;i++){
+      for(let i=1;i<=7;i++){
         const el = document.getElementById("s"+i);
         if(el) el.classList.add("hidden");
       }
-      document.getElementById("s"+n).classList.remove("hidden");
+      const show = document.getElementById("s"+n);
+      show.classList.remove("hidden");
+      show.classList.add("fadeIn");
+
+      // En el paso 7, mostramos quién completa el registro (solo decorativo)
+      if(n === 7){
+        const name = (document.getElementById("nombre")?.value || "").trim();
+        const city = (document.getElementById("ciudad")?.value || "").trim();
+        const age  = (document.getElementById("edad")?.value || "").trim();
+        const who = document.getElementById("who");
+
+        let parts = [];
+        if(name) parts.push(name);
+        if(city) parts.push(city);
+        if(age)  parts.push(age + " años");
+
+        who.textContent = parts.length ? ("Registro: " + parts.join(" • ")) : "";
+      }
     }
 
-    function startLoading(){
-      // Pantalla 3: simulación de carga (2s + 2s + 2s)
-      const msgs = [
-        "Analizando historia...",
-        "Buscando próximo capítulo...",
-        "Preparando mensaje..."
-      ];
-      let i = 0;
+    function restart(){
+      // resetea el flujo
+      qIndex = 0;
+      answers = [];
+      go(1);
+    }
 
+    // Step 4: preguntas SI/NO una por una
+    const questions = [
+      "¿Suele descansar de su trabajo?",
+      "¿Suele descansar mediante juegos de cualquier tipo?",
+      "¿Aguanta usted gritos agudos?",
+      "¿Le gusta a usted interactuar con niños?",
+      "¿Aguanta usted los olores fuertes?",
+      "¿Desea usted tener hijos?",
+      "¿Desea usted tener sobrinos?"
+    ];
+
+    let qIndex = 0;
+    let answers = []; // solo por si después querés mostrar resultados
+
+    function startYesNo(){
+      qIndex = 0;
+      answers = [];
+      go(4);
+      renderQuestion();
+    }
+
+    function renderQuestion(){
+      document.getElementById("qText").textContent = questions[qIndex];
+      const hint = document.getElementById("qHint");
+      hint.textContent = `Pregunta ${qIndex+1} de ${questions.length}`;
+    }
+
+    function answer(val){
+      answers.push(val ? "SI" : "NO");
+      qIndex++;
+
+      if(qIndex >= questions.length){
+        // Al terminar, vamos al paso 5
+        // Podés “ajustar” el texto según respuestas si querés después
+        document.getElementById("s5text").textContent =
+          "Seguramente se preguntará a qué se quiere llegar con estas preguntas...";
+        go(5);
+        return;
+      }
+
+      // Animación rápida: oculta y muestra para que parezca que “desaparece”
+      const qText = document.getElementById("qText");
+      qText.style.opacity = "0";
+      qText.style.transform = "translateY(6px)";
       setTimeout(() => {
-        // Si el usuario avanzó, actualizamos ahí
-        const loadingEl = document.getElementById("loading");
-        const timer = setInterval(() => {
-          loadingEl.innerText = msgs[i];
-          i++;
-          if(i >= msgs.length){
-            clearInterval(timer);
-            go(4);
-            startEtapas();
-          }
-        }, 2000);
-      }, 300);
+        qText.style.opacity = "1";
+        qText.style.transform = "translateY(0)";
+        renderQuestion();
+      }, 220);
     }
 
-    function startEtapas(){
-      const etapas = ["estudiar", "crecer", "enamorarse", "formar un hogar..."];
-      let i = 0;
-      const txt = document.getElementById("etapa");
-
-      const timer = setInterval(() => {
-        txt.innerText = etapas[i];
-        i++;
-        if(i >= etapas.length){
-          clearInterval(timer);
-          setTimeout(() => go(5), 1600);
-        }
-      }, 1400);
+    // Si falta la imagen, mostramos un mensaje claro (no rompe todo)
+    function imgError(img){
+      img.style.display = "none";
+      const wrap = img.closest(".ultraWrap");
+      const div = document.createElement("div");
+      div.style.padding = "18px";
+      div.innerHTML = `
+        <div style="font-weight:800; font-size:16px; margin-bottom:8px;">No se encontró la ecografía</div>
+        <div style="color: rgba(255,255,255,0.65); line-height:1.5;">
+          Subí tu archivo como <b>assets/ecografia.jpg</b> (respetando minúsculas) y recargá la página.
+        </div>
+      `;
+      wrap.prepend(div);
     }
   </script>
 </body>
